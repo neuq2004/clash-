@@ -1,3 +1,7 @@
-# P站
-# Pornhub
+# > Pornhub
+USER-AGENT,Pornhub*
 DOMAIN-SUFFIX,pornhubpremium.com
+DOMAIN-SUFFIX,phncdn.com
+DOMAIN-SUFFIX,pornhub.com
+DOMAIN,phprcdn
+
