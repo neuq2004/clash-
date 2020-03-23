@@ -1,0 +1,27 @@
+;不要随意改变关键字，否则会导致出错
+
+;设置规则标志位
+surge_ruleset=DIRECT,https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/LocalAreaNetwork.list
+surge_ruleset=🛑 全球拦截,rules/NobyDa/Surge/AdRule.list
+surge_ruleset=🛑 全球拦截,rules/ConnersHua/Surge/Ruleset/Hijacking.list
+surge_ruleset=🛑 全球拦截,https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/BanAD.list
+surge_ruleset=📹 YouTube,rules/ConnersHua/Surge/Ruleset/Media/YouTube.list
+surge_ruleset=📹 YouTube,https://raw.githubusercontent.com/ConnersHua/Profiles/master/Surge/Ruleset/Media/YouTube.list
+surge_ruleset=🎥 NETFLIX,rules/ConnersHua/Surge/Ruleset/Media/Netflix.list
+surge_ruleset=🚀 节点选择,https://raw.githubusercontent.com/neuq2004/clash-/master/Proxylite.list
+surge_ruleset=📲 电报吹水,rules/ConnersHua/Surge/Ruleset/Telegram.list
+surge_ruleset=DIRECT,https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ChinaDomain.list
+surge_ruleset=DIRECT,https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ChinaCompanyIp.list
+surge_ruleset=DIRECT,[]GEOIP,CN
+surge_ruleset=🐟 漏网之鱼,[]FINAL
+;设置规则标志位
+
+;设置分组标志位
+custom_proxy_group=🎮 满速节点`url-test`^((?!.*(台湾-3|IPLC)).)*$`http://www.gstatic.com/generate_204`800
+custom_proxy_group=🚀 节点选择`select`[]🎮 满速节点`.*^((?!.*(台湾-3|IPLC)).)*$
+custom_proxy_group=📹 YouTube`select`[]🎮 满速节点`[]🚀 节点选择`.*^((?!.*(台湾-3|IPLC)).)*$
+custom_proxy_group=📲 电报吹水`select`[]🎮 满速节点`[]🚀 节点选择`.*(新加坡|新|SG)
+custom_proxy_group=🐟 漏网之鱼`select`[]🚀 节点选择`[]🎮 满速节点`.*^((?!.*(台湾-3|IPLC)).)*$
+custom_proxy_group=🎥 NETFLIX`select`[]🎮 满速节点`[]🚀 节点选择`.*^((?!.*(台湾-3|IPLC)).)*$
+custom_proxy_group=🛑 全球拦截`select`[]REJECT`[]DIRECT
+;设置分组标志位
