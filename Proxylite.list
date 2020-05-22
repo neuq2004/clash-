@@ -20,14 +20,6 @@ DOMAIN-SUFFIX,t66y.com
 DOMAIN-SUFFIX,japonx.net
 DOMAIN-SUFFIX,jable.tv
 
-# 国外域名
-DOMAIN-SUFFIX,hk
-DOMAIN-SUFFIX,jp
-DOMAIN-SUFFIX,kr
-DOMAIN-SUFFIX,sg
-DOMAIN-SUFFIX,tw
-DOMAIN-SUFFIX,uk
-DOMAIN-SUFFIX,us
 
 # 国外域名关键字
 DOMAIN-KEYWORD,1e100
@@ -160,36 +152,7 @@ DOMAIN-SUFFIX,vox-cdn.com
 DOMAIN-SUFFIX,wikileaks.org
 DOMAIN-SUFFIX,wikipedia.org
 
-# Amazon
-DOMAIN-SUFFIX,amazon.co.jp
-DOMAIN-SUFFIX,amazon.com
-DOMAIN-SUFFIX,amazonaws.com
-IP-CIDR,13.32.0.0/15,no-resolve
-IP-CIDR,13.35.0.0/17,no-resolve
-IP-CIDR,18.184.0.0/15,no-resolve
-IP-CIDR,18.194.0.0/15,no-resolve
-IP-CIDR,18.208.0.0/13,no-resolve
-IP-CIDR,18.232.0.0/14,no-resolve
-IP-CIDR,52.58.0.0/15,no-resolve
-IP-CIDR,52.74.0.0/16,no-resolve
-IP-CIDR,52.77.0.0/16,no-resolve
-IP-CIDR,52.84.0.0/15,no-resolve
-IP-CIDR,52.200.0.0/13,no-resolve
-IP-CIDR,54.93.0.0/16,no-resolve
-IP-CIDR,54.156.0.0/14,no-resolve
-IP-CIDR,54.226.0.0/15,no-resolve
-IP-CIDR,54.230.156.0/22,no-resolve
 
-# BBC
-DOMAIN-KEYWORD,uk-live
-DOMAIN-SUFFIX,bbc.co
-DOMAIN-SUFFIX,bbc.com
-
-# Discord
-DOMAIN-SUFFIX,discord.gg
-DOMAIN-SUFFIX,discord.media
-DOMAIN-SUFFIX,discordapp.com
-DOMAIN-SUFFIX,discordapp.net
 
 # Facebook
 DOMAIN-SUFFIX,facebook.com
