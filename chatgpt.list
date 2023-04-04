@@ -1,0 +1,6 @@
+payload:
+  - 'openai.com'
+  - 'chat.openai.com'
+  - 'auth0.openai.com'
+  - 'platform.openai.com'
+  - 'ai.com'
