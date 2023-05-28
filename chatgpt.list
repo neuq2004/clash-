@@ -4,3 +4,4 @@ payload:
   - 'auth0.openai.com'
   - 'platform.openai.com'
   - 'ai.com'
+  - 'sentry.io'
