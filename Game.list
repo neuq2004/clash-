@@ -1,12 +1,13 @@
-DOMAIN-SUFFIX,fanatical.com
-DOMAIN-SUFFIX,humblebundle.com
-DOMAIN-SUFFIX,steam-chat.com
-DOMAIN-SUFFIX,steamcommunity.com
-DOMAIN-SUFFIX,steampowered.com
-DOMAIN-SUFFIX,steamstatic.com
-DOMAIN-SUFFIX,epicgames.com
-DOMAIN-SUFFIX,helpshift.com
-DOMAIN-SUFFIX,paragon.com
-DOMAIN-SUFFIX,unrealengine.com
-DOMAIN-SUFFIX,epicgames.dev
-DOMAIN-SUFFIX,rockstargames.com
+payload:
+  - 'openai.com'
+  - 'chat.openai.com'
+  - 'auth0.openai.com'
+  - 'platform.openai.com'
+  - 'ai.com'
+  - 'sentry.io'
+  - 'openai.com'
+  - 'chat.openai.com'
+  - 'auth0.openai.com'
+  - 'platform.openai.com'
+  - 'ai.com'
+  - 'sentry.io'
