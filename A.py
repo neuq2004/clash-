@@ -115,12 +115,12 @@ QPushButton#warningButton:hover {
 QPushButton#stopButton {
     background-color: #dc3545;
     border: none;
-    border-radius: 8px;
+    border-radius: 3px;
     padding: 0px;
-    min-width: 16px;
-    min-height: 16px;
-    max-width: 16px;
-    max-height: 16px;
+    min-width: 22px;
+    min-height: 18px;
+    max-width: 22px;
+    max-height: 18px;
 }
 
 QPushButton#stopButton:hover {
@@ -1646,11 +1646,11 @@ class RTMPDownloaderApp(QMainWindow):
         stop_button = QPushButton("") # 去除文字
         stop_button.setFont(self.default_font)
         stop_button.setObjectName("stopButton") 
-        # 修复：设置更小的移除按钮尺寸并确保居中对齐
+        # 修复：设置长方形移除按钮尺寸并确保居中对齐
         stop_button.setIcon(QIcon(os.path.join(ICON_PATH, "stop.png")))
-        stop_button.setIconSize(QSize(10, 10)) # 保持图标大小不变
-        stop_button.setMaximumSize(16, 16) # 设置更小的最大尺寸限制
-        stop_button.setFixedSize(16, 16) # 设置更小的按钮尺寸
+        stop_button.setIconSize(QSize(12, 12)) # 稍微调大图标大小
+        stop_button.setMaximumSize(22, 18) # 设置长方形最大尺寸限制
+        stop_button.setFixedSize(22, 18) # 设置长方形按钮尺寸
         stop_button.clicked.connect(lambda _, tid=task_id: self.remove_from_queue(tid))
         task_hbox_layout.addWidget(stop_button, 0, Qt.AlignVCenter) # 垂直居中对齐
         
@@ -1769,11 +1769,11 @@ class RTMPDownloaderApp(QMainWindow):
             stop_button = QPushButton("") # 去除文字
             stop_button.setFont(self.default_font)
             stop_button.setObjectName("stopButton")
-            # 修复：与队列移除按钮保持一致的设置
+            # 修复：与队列移除按钮保持一致的长方形设置
             stop_button.setIcon(QIcon(os.path.join(ICON_PATH, "stop.png")))
-            stop_button.setIconSize(QSize(10, 10)) # 保持图标大小不变
-            stop_button.setMaximumSize(16, 16) # 设置更小的最大尺寸限制
-            stop_button.setFixedSize(16, 16) # 与队列移除按钮保持一致的尺寸
+            stop_button.setIconSize(QSize(12, 12)) # 稍微调大图标大小
+            stop_button.setMaximumSize(22, 18) # 设置长方形最大尺寸限制
+            stop_button.setFixedSize(22, 18) # 与队列移除按钮保持一致的长方形尺寸
             stop_button.clicked.connect(lambda _, tid=task_id: self.stop_download_task(tid))
             task_hbox_layout.addWidget(stop_button, 0, Qt.AlignVCenter) # 垂直居中对齐
             
@@ -1801,8 +1801,8 @@ class RTMPDownloaderApp(QMainWindow):
             self.download_tasks[task_id]['status'] = '正在准备下载...'
             stop_button = self.download_tasks[task_id]['stop_button']
             stop_button.setText("") # 去除文字
-            stop_button.setFixedSize(16, 16) # 保持与移除按钮一致的大小
-            stop_button.setIconSize(QSize(10, 10)) # 保持与移除按钮一致的图标大小
+            stop_button.setFixedSize(22, 18) # 保持与移除按钮一致的长方形大小
+            stop_button.setIconSize(QSize(12, 12)) # 保持与移除按钮一致的图标大小
 
             self.update_task_status_gui(task_id, "正在准备下载...")
 
