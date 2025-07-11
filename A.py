@@ -1593,11 +1593,11 @@ class RTMPDownloaderApp(QMainWindow):
         
         task_info_widget = QFrame()
         task_info_widget.setObjectName("taskFrame")
-        # 修复：设置整个任务项容器的固定高度，使其更紧凑
-        task_info_widget.setFixedHeight(24)  # 设置整个任务项的固定高度
+        # 修复：设置整个任务项容器的固定高度，稍微提高一点
+        task_info_widget.setFixedHeight(28)  # 提高整个任务项的高度
         task_hbox_layout = QHBoxLayout(task_info_widget)
-        task_hbox_layout.setContentsMargins(4, 2, 4, 2) # 调整内边距
-        task_hbox_layout.setSpacing(4) # 调整间距
+        task_hbox_layout.setContentsMargins(4, 3, 4, 3) # 调整内边距
+        task_hbox_layout.setSpacing(6) # 调整间距
         
         self.max_rtmp_var_display_width = max(self.max_rtmp_var_display_width, get_display_width(f"变量: {short_rtmp_var}"))
         
@@ -1619,19 +1619,21 @@ class RTMPDownloaderApp(QMainWindow):
         task_label.setObjectName("taskLabel")
         task_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         task_label.setMinimumWidth(700) 
-        # 修复：让标签自适应容器高度
+        # 修复：确保文字区域有足够高度显示文字
+        task_label.setMinimumHeight(22)  # 设置最小高度确保文字可见
         task_label.setAlignment(Qt.AlignVCenter)  # 垂直居中对齐
         task_hbox_layout.addWidget(task_label)
         
         stop_button = QPushButton("") # 去除文字
         stop_button.setFont(self.default_font)
         stop_button.setObjectName("stopButton") 
-        # 修复：设置更小的终止按钮
+        # 修复：真正缩小终止按钮尺寸并居中对齐
         stop_button.setIcon(QIcon(os.path.join(ICON_PATH, "stop.png")))
-        stop_button.setIconSize(QSize(10, 10)) # 设置更小的图标大小
-        stop_button.setFixedSize(20, 20) # 设置更小的正方形按钮
+        stop_button.setIconSize(QSize(10, 10)) # 保持图标大小不变
+        stop_button.setMaximumSize(18, 18) # 设置最大尺寸限制
+        stop_button.setFixedSize(18, 18) # 设置明显更小的按钮尺寸
         stop_button.clicked.connect(lambda _, tid=task_id: self.remove_from_queue(tid))
-        task_hbox_layout.addWidget(stop_button, 0, Qt.AlignVCenter) # 垂直居中对齐
+        task_hbox_layout.addWidget(stop_button, 0, Qt.AlignCenter) # 完全居中对齐
         
         self.download_tasks[task_id] = {
             'anchor_name': anchor_name,
