@@ -1566,6 +1566,10 @@ class RTMPDownloaderApp(QMainWindow):
             QMessageBox.information(self, "提示", "主播列表为空，请先刷新或检查 anchors.txt 文件。")
             return
         
+        total_anchors = len(self.found_anchors_list)
+        num_columns = max(1, (total_anchors + MAX_ANCHORS_PER_COLUMN - 1) // MAX_ANCHORS_PER_COLUMN)
+        anchors_per_column = (total_anchors + num_columns - 1) // num_columns
+        
         dropdown = QMainWindow(self)
         dropdown.setWindowTitle("选择主播")
         # 计算实际需要的高度
@@ -1581,10 +1585,6 @@ class RTMPDownloaderApp(QMainWindow):
         dropdown.setCentralWidget(central_widget)
         layout = QHBoxLayout(central_widget)
         layout.setSpacing(10)
-        
-        total_anchors = len(self.found_anchors_list)
-        num_columns = max(1, (total_anchors + MAX_ANCHORS_PER_COLUMN - 1) // MAX_ANCHORS_PER_COLUMN)
-        anchors_per_column = (total_anchors + num_columns - 1) // num_columns
         
         max_name_lengths = [0] * num_columns
         anchor_indices = [[] for _ in range(num_columns)]
@@ -1811,26 +1811,26 @@ class RTMPDownloaderApp(QMainWindow):
             
             short_rtmp_var = get_short_rtmp_var(rtmp_var)
             
-                         # 创建任务卡片
-             task_info_widget = QFrame()
-             task_info_widget.setObjectName("taskFrame")
-             task_hbox_layout = QHBoxLayout(task_info_widget)
-             task_hbox_layout.setContentsMargins(6, 4, 6, 4)
-             task_hbox_layout.setSpacing(8)
-             
-             task_label = QLabel(f"[任务{task_id}] 主播: {anchor_name}, 变量: {short_rtmp_var}, 状态: 正在准备下载...")
-             task_label.setFont(self.tasks_font)
-             task_label.setObjectName("taskLabel")
-             task_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-             task_label.setMinimumWidth(700)
-             task_hbox_layout.addWidget(task_label)
-             
-             stop_button = QPushButton("⏹️ 终止")
-             stop_button.setObjectName("dangerButton")
-             stop_button.setFont(self.default_font)
-             stop_button.setFixedSize(70, 26)
-             stop_button.clicked.connect(lambda _, tid=task_id: self.stop_download_task(tid))
-             task_hbox_layout.addWidget(stop_button, 0, Qt.AlignCenter)
+            # 创建任务卡片
+            task_info_widget = QFrame()
+            task_info_widget.setObjectName("taskFrame")
+            task_hbox_layout = QHBoxLayout(task_info_widget)
+            task_hbox_layout.setContentsMargins(6, 4, 6, 4)
+            task_hbox_layout.setSpacing(8)
+            
+            task_label = QLabel(f"[任务{task_id}] 主播: {anchor_name}, 变量: {short_rtmp_var}, 状态: 正在准备下载...")
+            task_label.setFont(self.tasks_font)
+            task_label.setObjectName("taskLabel")
+            task_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+            task_label.setMinimumWidth(700)
+            task_hbox_layout.addWidget(task_label)
+            
+            stop_button = QPushButton("⏹️ 终止")
+            stop_button.setObjectName("dangerButton")
+            stop_button.setFont(self.default_font)
+            stop_button.setFixedSize(70, 26)
+            stop_button.clicked.connect(lambda _, tid=task_id: self.stop_download_task(tid))
+            task_hbox_layout.addWidget(stop_button, 0, Qt.AlignCenter)
             
             self.download_tasks[task_id] = {
                 'anchor_name': anchor_name,
@@ -1858,10 +1858,10 @@ class RTMPDownloaderApp(QMainWindow):
             if task_id not in self.download_tasks:
                 return
             
-                         self.download_tasks[task_id]['status'] = '正在准备下载...'
-             self.download_tasks[task_id]['stop_button'].setText("⏹️ 终止")
-             self.download_tasks[task_id]['stop_button'].setFixedSize(70, 26)
-             self.update_task_status_gui(task_id, "正在准备下载...")
+            self.download_tasks[task_id]['status'] = '正在准备下载...'
+            self.download_tasks[task_id]['stop_button'].setText("⏹️ 终止")
+            self.download_tasks[task_id]['stop_button'].setFixedSize(70, 26)
+            self.update_task_status_gui(task_id, "正在准备下载...")
 
         # 创建并启动下载线程
         thread = DownloadThread(task_id, rtmp_var, anchor_name, OUTPUT_DIR, MIN_FILE_SIZE_MB, self.file_access_lock, self.log_lock)
