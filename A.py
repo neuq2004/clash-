@@ -117,10 +117,10 @@ QPushButton#stopButton {
     border: none;
     border-radius: 3px;
     padding: 0px;
-    min-width: 22px;
-    min-height: 18px;
-    max-width: 22px;
-    max-height: 18px;
+    min-width: 40px;
+    min-height: 30px;
+    max-width: 40px;
+    max-height: 30px;
 }
 
 QPushButton#stopButton:hover {
@@ -1192,9 +1192,9 @@ class RTMPDownloaderApp(QMainWindow):
         
         self.tasks_container = QWidget()
         self.tasks_container_layout = QVBoxLayout(self.tasks_container)
-        # 修复：进一步调整任务项的内边距和间距，使其更紧凑
+        # 修复：调整任务项的内边距和间距，适应更大的任务项
         self.tasks_container_layout.setContentsMargins(0, 0, 0, 0) # 减小外边距
-        self.tasks_container_layout.setSpacing(1) # 进一步减小任务项之间间距
+        self.tasks_container_layout.setSpacing(3) # 稍微增大任务项之间间距以适应更大的任务项
         self.tasks_container_layout.setAlignment(Qt.AlignTop)
         self.tasks_container_layout.addStretch(1) 
         self.tasks_scroll.setWidget(self.tasks_container)
@@ -1612,11 +1612,11 @@ class RTMPDownloaderApp(QMainWindow):
         
         task_info_widget = QFrame()
         task_info_widget.setObjectName("taskFrame")
-        # 修复：设置整个任务项容器的固定高度，稍微提高一点
-        task_info_widget.setFixedHeight(28)  # 提高整个任务项的高度
+        # 修复：设置整个任务项容器的固定高度，适应更大的按钮
+        task_info_widget.setFixedHeight(40)  # 增大整个任务项的高度以适应40x30按钮
         task_hbox_layout = QHBoxLayout(task_info_widget)
-        task_hbox_layout.setContentsMargins(4, 3, 4, 3) # 调整内边距
-        task_hbox_layout.setSpacing(6) # 调整间距
+        task_hbox_layout.setContentsMargins(6, 5, 6, 5) # 增大内边距
+        task_hbox_layout.setSpacing(8) # 增大间距
         
         self.max_rtmp_var_display_width = max(self.max_rtmp_var_display_width, get_display_width(f"变量: {short_rtmp_var}"))
         
@@ -1638,19 +1638,19 @@ class RTMPDownloaderApp(QMainWindow):
         task_label.setObjectName("taskLabel")
         task_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         task_label.setMinimumWidth(700) 
-        # 修复：确保文字区域有足够高度显示文字并居中对齐
-        task_label.setMinimumHeight(22)  # 设置最小高度确保文字可见
+        # 修复：确保文字区域有足够高度显示文字并居中对齐，适应更大的任务项框
+        task_label.setMinimumHeight(30)  # 增大最小高度以适应更大的任务项框
         task_label.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)  # 垂直居中，水平左对齐
         task_hbox_layout.addWidget(task_label, 1)  # 添加stretch factor使其占用剩余空间
         
         stop_button = QPushButton("") # 去除文字
         stop_button.setFont(self.default_font)
         stop_button.setObjectName("stopButton") 
-        # 修复：设置长方形移除按钮尺寸并确保居中对齐
+        # 修复：设置40x30移除按钮尺寸并确保居中对齐
         stop_button.setIcon(QIcon(os.path.join(ICON_PATH, "stop.png")))
-        stop_button.setIconSize(QSize(12, 12)) # 稍微调大图标大小
-        stop_button.setMaximumSize(22, 18) # 设置长方形最大尺寸限制
-        stop_button.setFixedSize(22, 18) # 设置长方形按钮尺寸
+        stop_button.setIconSize(QSize(16, 16)) # 调大图标大小以适应更大的按钮
+        stop_button.setMaximumSize(40, 30) # 设置40x30最大尺寸限制
+        stop_button.setFixedSize(40, 30) # 设置40x30按钮尺寸
         stop_button.clicked.connect(lambda _, tid=task_id: self.remove_from_queue(tid))
         task_hbox_layout.addWidget(stop_button, 0, Qt.AlignVCenter) # 垂直居中对齐
         
@@ -1736,10 +1736,10 @@ class RTMPDownloaderApp(QMainWindow):
             task_info_widget = QFrame()
             task_info_widget.setObjectName("taskFrame")
             # 修复：使立即下载的任务项与队列任务项保持一致的高度
-            task_info_widget.setFixedHeight(28)  # 与队列任务项保持一致的高度
+            task_info_widget.setFixedHeight(40)  # 与队列任务项保持一致的更大高度
             task_hbox_layout = QHBoxLayout(task_info_widget)
-            task_hbox_layout.setContentsMargins(4, 3, 4, 3) # 与队列任务项保持一致的内边距
-            task_hbox_layout.setSpacing(6) # 与队列任务项保持一致的间距
+            task_hbox_layout.setContentsMargins(6, 5, 6, 5) # 与队列任务项保持一致的内边距
+            task_hbox_layout.setSpacing(8) # 与队列任务项保持一致的间距
             
             self.max_rtmp_var_display_width = max(self.max_rtmp_var_display_width, get_display_width(f"变量: {short_rtmp_var}"))
 
@@ -1762,18 +1762,18 @@ class RTMPDownloaderApp(QMainWindow):
             task_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
             task_label.setMinimumWidth(700) 
             # 修复：与队列任务标签保持一致的设置
-            task_label.setMinimumHeight(22)  # 设置最小高度确保文字可见
+            task_label.setMinimumHeight(30)  # 与队列任务标签保持一致的更大高度
             task_label.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)  # 垂直居中，水平左对齐
             task_hbox_layout.addWidget(task_label, 1)  # 添加stretch factor使其占用剩余空间
             
             stop_button = QPushButton("") # 去除文字
             stop_button.setFont(self.default_font)
             stop_button.setObjectName("stopButton")
-            # 修复：与队列移除按钮保持一致的长方形设置
+            # 修复：与队列移除按钮保持一致的40x30设置
             stop_button.setIcon(QIcon(os.path.join(ICON_PATH, "stop.png")))
-            stop_button.setIconSize(QSize(12, 12)) # 稍微调大图标大小
-            stop_button.setMaximumSize(22, 18) # 设置长方形最大尺寸限制
-            stop_button.setFixedSize(22, 18) # 与队列移除按钮保持一致的长方形尺寸
+            stop_button.setIconSize(QSize(16, 16)) # 调大图标大小以适应更大的按钮
+            stop_button.setMaximumSize(40, 30) # 设置40x30最大尺寸限制
+            stop_button.setFixedSize(40, 30) # 与队列移除按钮保持一致的40x30尺寸
             stop_button.clicked.connect(lambda _, tid=task_id: self.stop_download_task(tid))
             task_hbox_layout.addWidget(stop_button, 0, Qt.AlignVCenter) # 垂直居中对齐
             
@@ -1801,8 +1801,8 @@ class RTMPDownloaderApp(QMainWindow):
             self.download_tasks[task_id]['status'] = '正在准备下载...'
             stop_button = self.download_tasks[task_id]['stop_button']
             stop_button.setText("") # 去除文字
-            stop_button.setFixedSize(22, 18) # 保持与移除按钮一致的长方形大小
-            stop_button.setIconSize(QSize(12, 12)) # 保持与移除按钮一致的图标大小
+            stop_button.setFixedSize(40, 30) # 保持与移除按钮一致的40x30大小
+            stop_button.setIconSize(QSize(16, 16)) # 保持与移除按钮一致的图标大小
 
             self.update_task_status_gui(task_id, "正在准备下载...")
 
