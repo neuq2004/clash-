@@ -192,9 +192,9 @@ QFrame {
 QFrame#taskFrame {
     background-color: white;
     border: 1px solid #dee2e6;
-    border-radius: 8px;
-    margin: 4px;
-    padding: 8px;
+    border-radius: 6px;
+    margin: 2px;
+    padding: 6px;
 }
 
 QFrame#taskFrame:hover {
@@ -371,9 +371,9 @@ QFrame {
 QFrame#taskFrame {
     background-color: #404040;
     border: 1px solid #555555;
-    border-radius: 8px;
-    margin: 4px;
-    padding: 8px;
+    border-radius: 6px;
+    margin: 2px;
+    padding: 6px;
 }
 
 QFrame#taskFrame:hover {
@@ -896,7 +896,7 @@ class AnchorEditorDialog(QDialog):
         super().__init__(parent)
         self.setWindowTitle("主播列表编辑器")
         self.setModal(True)
-        self.resize(500, 400)
+        self.resize(700, 600)
         
         # 居中显示
         screen = QDesktopWidget().screenGeometry()
@@ -933,7 +933,7 @@ class AnchorEditorDialog(QDialog):
                 border-radius: 6px;
                 background-color: white;
                 selection-background-color: #007bff;
-                font-size: 11px;
+                font-size: 14px;
             }
             QListWidget::item {
                 padding: 8px 12px;
@@ -1302,11 +1302,13 @@ class RTMPDownloaderApp(QMainWindow):
         # 任务滚动区域
         self.tasks_scroll = QScrollArea()
         self.tasks_scroll.setWidgetResizable(True)
-        self.tasks_scroll.setMinimumHeight(200)
-        self.tasks_scroll.setMaximumHeight(300)
+        self.tasks_scroll.setMinimumHeight(400)
+        self.tasks_scroll.setMaximumHeight(500)
         
         self.tasks_container = QWidget()
         self.tasks_container_layout = QVBoxLayout(self.tasks_container)
+        self.tasks_container_layout.setSpacing(4)  # 紧凑间距
+        self.tasks_container_layout.setContentsMargins(4, 4, 4, 4)  # 紧凑边距
         self.tasks_container_layout.addStretch(1)
         self.tasks_scroll.setWidget(self.tasks_container)
         
@@ -1325,7 +1327,8 @@ class RTMPDownloaderApp(QMainWindow):
         self.log_text = QTextEdit()
         self.log_text.setReadOnly(True)
         self.log_text.setFont(self.log_font)
-        self.log_text.setMinimumHeight(200)
+        self.log_text.setMinimumHeight(150)
+        self.log_text.setMaximumHeight(200)
         log_layout.addWidget(self.log_text)
         
         main_layout.addWidget(log_frame)
@@ -1565,7 +1568,9 @@ class RTMPDownloaderApp(QMainWindow):
         
         dropdown = QMainWindow(self)
         dropdown.setWindowTitle("选择主播")
-        dropdown.setFixedSize(ANCHOR_DROPDOWN_WIDTH, ANCHOR_DROPDOWN_HEIGHT)
+        # 计算实际需要的高度
+        actual_height = anchors_per_column * 28 + 100  # 加上窗口边框和标题栏
+        dropdown.setFixedSize(ANCHOR_DROPDOWN_WIDTH, min(actual_height, 800))  # 最大不超过800px
         
         # 居中显示
         screen = QDesktopWidget().screenGeometry()
@@ -1597,8 +1602,8 @@ class RTMPDownloaderApp(QMainWindow):
             list_widget.setFont(self.anchor_list_font)
             calculated_width = (3 + max_name_lengths[c] + 5) * 10
             list_widget.setFixedWidth(max(calculated_width, 200))
-            list_widget.setFixedHeight(min(anchors_per_column * 24, ANCHOR_DROPDOWN_HEIGHT - 50))
-            list_widget.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+            list_widget.setFixedHeight(anchors_per_column * 28 + 10)  # 完全展示所有项目
+            list_widget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # 禁用滚动条
             
             for idx in anchor_indices[c]:
                 original_num, anchor_name = self.found_anchors_list[idx]
@@ -1698,8 +1703,8 @@ class RTMPDownloaderApp(QMainWindow):
         task_info_widget = QFrame()
         task_info_widget.setObjectName("taskFrame")
         task_hbox_layout = QHBoxLayout(task_info_widget)
-        task_hbox_layout.setContentsMargins(8, 8, 8, 8)
-        task_hbox_layout.setSpacing(12)
+        task_hbox_layout.setContentsMargins(6, 4, 6, 4)
+        task_hbox_layout.setSpacing(8)
         
         task_label = QLabel(f"[任务{task_id}] 主播: {anchor_name}, 变量: {short_rtmp_var}, 状态: 等待下载...")
         task_label.setFont(self.tasks_font)
@@ -1711,9 +1716,9 @@ class RTMPDownloaderApp(QMainWindow):
         stop_button = QPushButton("🗑️ 移除")
         stop_button.setObjectName("dangerButton")
         stop_button.setFont(self.default_font)
-        stop_button.setFixedSize(90, 32)
+        stop_button.setFixedSize(70, 26)
         stop_button.clicked.connect(lambda _, tid=task_id: self.remove_from_queue(tid))
-        task_hbox_layout.addWidget(stop_button)
+        task_hbox_layout.addWidget(stop_button, 0, Qt.AlignCenter)
         
         self.download_tasks[task_id] = {
             'anchor_name': anchor_name,
@@ -1806,26 +1811,26 @@ class RTMPDownloaderApp(QMainWindow):
             
             short_rtmp_var = get_short_rtmp_var(rtmp_var)
             
-            # 创建任务卡片
-            task_info_widget = QFrame()
-            task_info_widget.setObjectName("taskFrame")
-            task_hbox_layout = QHBoxLayout(task_info_widget)
-            task_hbox_layout.setContentsMargins(8, 8, 8, 8)
-            task_hbox_layout.setSpacing(12)
-            
-            task_label = QLabel(f"[任务{task_id}] 主播: {anchor_name}, 变量: {short_rtmp_var}, 状态: 正在准备下载...")
-            task_label.setFont(self.tasks_font)
-            task_label.setObjectName("taskLabel")
-            task_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-            task_label.setMinimumWidth(700)
-            task_hbox_layout.addWidget(task_label)
-            
-            stop_button = QPushButton("⏹️ 终止")
-            stop_button.setObjectName("dangerButton")
-            stop_button.setFont(self.default_font)
-            stop_button.setFixedSize(90, 32)
-            stop_button.clicked.connect(lambda _, tid=task_id: self.stop_download_task(tid))
-            task_hbox_layout.addWidget(stop_button)
+                         # 创建任务卡片
+             task_info_widget = QFrame()
+             task_info_widget.setObjectName("taskFrame")
+             task_hbox_layout = QHBoxLayout(task_info_widget)
+             task_hbox_layout.setContentsMargins(6, 4, 6, 4)
+             task_hbox_layout.setSpacing(8)
+             
+             task_label = QLabel(f"[任务{task_id}] 主播: {anchor_name}, 变量: {short_rtmp_var}, 状态: 正在准备下载...")
+             task_label.setFont(self.tasks_font)
+             task_label.setObjectName("taskLabel")
+             task_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+             task_label.setMinimumWidth(700)
+             task_hbox_layout.addWidget(task_label)
+             
+             stop_button = QPushButton("⏹️ 终止")
+             stop_button.setObjectName("dangerButton")
+             stop_button.setFont(self.default_font)
+             stop_button.setFixedSize(70, 26)
+             stop_button.clicked.connect(lambda _, tid=task_id: self.stop_download_task(tid))
+             task_hbox_layout.addWidget(stop_button, 0, Qt.AlignCenter)
             
             self.download_tasks[task_id] = {
                 'anchor_name': anchor_name,
@@ -1853,9 +1858,10 @@ class RTMPDownloaderApp(QMainWindow):
             if task_id not in self.download_tasks:
                 return
             
-            self.download_tasks[task_id]['status'] = '正在准备下载...'
-            self.download_tasks[task_id]['stop_button'].setText("⏹️ 终止")
-            self.update_task_status_gui(task_id, "正在准备下载...")
+                         self.download_tasks[task_id]['status'] = '正在准备下载...'
+             self.download_tasks[task_id]['stop_button'].setText("⏹️ 终止")
+             self.download_tasks[task_id]['stop_button'].setFixedSize(70, 26)
+             self.update_task_status_gui(task_id, "正在准备下载...")
 
         # 创建并启动下载线程
         thread = DownloadThread(task_id, rtmp_var, anchor_name, OUTPUT_DIR, MIN_FILE_SIZE_MB, self.file_access_lock, self.log_lock)
@@ -1867,8 +1873,8 @@ class RTMPDownloaderApp(QMainWindow):
         
         thread.start()
         
-        # 只有直接下载或队列为空时才清空输入字段
-        if task_id not in [tid for tid, _, _ in self.download_queue]:
+        # 清空输入字段 - 直接下载时总是清空，队列下载时不清空
+        if rtmp_var == self.rtmp_entry.text().strip():  # 直接下载
             self.rtmp_entry.clear()
             self.anchor_combo.setText("请选择主播")
             self.selected_anchor_name = ""
