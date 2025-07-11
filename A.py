@@ -36,7 +36,7 @@ DEFAULT_FONT_FAMILY = "Microsoft YaHei UI"  # 默认字体家族
 DEFAULT_FONT_SIZE = 10  # 默认字体大小
 LOG_FONT_SIZE = 9  # 日志字体大小
 ANCHOR_LIST_FONT_FAMILY = "Microsoft YaHei UI"  # 主播列表字体
-ANCHOR_LIST_FONT_SIZE = 12  # 主播列表字体大小
+ANCHOR_LIST_FONT_SIZE = 10  # 主播列表字体大小（减小）
 MAX_ANCHORS_PER_COLUMN = 52  # 每列最大主播数
 ANCHOR_DROPDOWN_WIDTH = 1200 # 主播下拉菜单宽度
 ANCHOR_DROPDOWN_HEIGHT = 1100 # 主播下拉菜单高度
@@ -110,6 +110,48 @@ QPushButton#warningButton {
 
 QPushButton#warningButton:hover {
     background-color: #e0a800;
+}
+
+QPushButton#stopButton {
+    background-color: #dc3545;
+    border: none;
+    border-radius: 3px;
+    padding: 0px;
+    min-width: 40px;
+    min-height: 30px;
+    max-width: 40px;
+    max-height: 30px;
+}
+
+QPushButton#stopButton:hover {
+    background-color: #c82333;
+}
+
+QPushButton#stopButton:pressed {
+    background-color: #bd2130;
+}
+
+QLineEdit#anchorCombo {
+    background-color: #f8f9fa;
+    border: 2px solid #007bff;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 11px;
+    color: #495057;
+    font-weight: bold;
+    text-align: center;
+}
+
+QLineEdit#anchorCombo:hover {
+    background-color: #e3f2fd;
+    border-color: #0056b3;
+    cursor: pointer;
+}
+
+QLineEdit#anchorCombo:focus {
+    background-color: #ffffff;
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
 QLineEdit {
@@ -194,7 +236,7 @@ QFrame#taskFrame {
     border: 1px solid #dee2e6;
     border-radius: 4px;
     margin: 1px;
-    padding: 4px;
+    padding: 2px;
 }
 
 QFrame#taskFrame:hover {
@@ -760,10 +802,9 @@ class AnchorEditorDialog(QDialog):
         self.setModal(True)
         self.resize(700, 600)
         
-        # 居中显示
+        # 居中显示 - 修复：使用对话框实际设置的尺寸
         screen = QDesktopWidget().screenGeometry()
-        size = self.geometry()
-        self.move((screen.width() - size.width()) // 2, (screen.height() - size.height()) // 2)
+        self.move((screen.width() - 700) // 2, (screen.height() - 600) // 2)
         
         self.current_anchors = {}
         self.load_current_anchors()
@@ -978,10 +1019,9 @@ class RTMPDownloaderApp(QMainWindow):
         self.setWindowTitle("RTMP 下载工具 - 美化版 (已修复功能)") 
         self.setGeometry(100, 100, 1200, 800)
         
-        # 居中显示
+        # 居中显示 - 修复：使用窗口实际设置的尺寸
         screen = QDesktopWidget().screenGeometry()
-        size = self.geometry()
-        self.move((screen.width() - size.width()) // 2, (screen.height() - size.height()) // 2)
+        self.move((screen.width() - 1200) // 2, (screen.height() - 800) // 2)
         
         # 设置应用图标
         if os.path.exists(ICON_PATH):
@@ -1109,8 +1149,10 @@ class RTMPDownloaderApp(QMainWindow):
         select_layout.addWidget(select_label)
         
         self.anchor_combo = QLineEdit() 
-        self.anchor_combo.setPlaceholderText("请选择主播")
+        self.anchor_combo.setObjectName("anchorCombo")  # 设置样式ID
+        self.anchor_combo.setPlaceholderText("👤 请选择主播")  # 添加图标
         self.anchor_combo.setReadOnly(True)
+        self.anchor_combo.setAlignment(Qt.AlignCenter)  # 文字居中
         self.anchor_combo.textChanged.connect(self.check_download_button_state)
         # 修复：直接连接 mousePressEvent 到 show_anchor_dropdown
         self.anchor_combo.mousePressEvent = lambda event: self.show_anchor_dropdown()
@@ -1175,9 +1217,9 @@ class RTMPDownloaderApp(QMainWindow):
         
         self.tasks_container = QWidget()
         self.tasks_container_layout = QVBoxLayout(self.tasks_container)
-        # 修复：调整任务项的内边距和间距，使其更紧凑
+        # 修复：调整任务项的内边距和间距，适应更大的任务项
         self.tasks_container_layout.setContentsMargins(0, 0, 0, 0) # 减小外边距
-        self.tasks_container_layout.setSpacing(2) # 减小任务项之间间距
+        self.tasks_container_layout.setSpacing(3) # 稍微增大任务项之间间距以适应更大的任务项
         self.tasks_container_layout.setAlignment(Qt.AlignTop)
         self.tasks_container_layout.addStretch(1) 
         self.tasks_scroll.setWidget(self.tasks_container)
@@ -1353,8 +1395,8 @@ class RTMPDownloaderApp(QMainWindow):
         # 只有填好变量 AND 选择好主播，按钮才启用
         enable = bool(self.rtmp_entry.text().strip() and \
                       self.selected_anchor_name and \
-                      self.anchor_combo.text() != "请选择主播" and \
-                      self.anchor_combo.text() != "无主播")
+                      self.anchor_combo.text() != "👤 请选择主播" and \
+                      self.anchor_combo.text() != "❌ 无主播")
         
         self.add_to_queue_button.setEnabled(enable)
         self.download_button.setEnabled(enable)
@@ -1378,14 +1420,14 @@ class RTMPDownloaderApp(QMainWindow):
         if not self.anchors and not os.path.exists(ANCHORS_FILE):
             QMessageBox.warning(self, "警告", f"未找到主播配置文件 '{ANCHORS_FILE}'。\n请确保该文件存在且每行输入一个主播名称。")
             self.disable_operational_controls() 
-            self.anchor_combo.setText("无主播")
+            self.anchor_combo.setText("❌ 无主播")
             self.anchor_combo.setEnabled(False) 
             self.refresh_anchors_button.setEnabled(True)
             self.edit_anchors_button.setEnabled(True)
         elif not self.anchors:
             QMessageBox.warning(self, "警告", f"主播配置文件 '{ANCHORS_FILE}' 为空。\n请在文件中添加主播名称。")
             self.disable_operational_controls() 
-            self.anchor_combo.setText("无主播")
+            self.anchor_combo.setText("❌ 无主播")
             self.anchor_combo.setEnabled(False) 
             self.refresh_anchors_button.setEnabled(True)
             self.edit_anchors_button.setEnabled(True)
@@ -1403,7 +1445,7 @@ class RTMPDownloaderApp(QMainWindow):
             self.refresh_anchors_button.setEnabled(True)
             self.edit_anchors_button.setEnabled(True)
             self.check_download_button_state()
-            self.anchor_combo.setText("请选择主播")
+            self.anchor_combo.setText("👤 请选择主播")
             self.selected_anchor_name = ""
             self.selected_anchor_original_num = ""
             self.search_entry.clear()
@@ -1438,11 +1480,12 @@ class RTMPDownloaderApp(QMainWindow):
         dropdown.setWindowTitle("选择主播")
         
         # 计算列表项的单行高度
-        # 这里使用一个近似值，可以通过实际测量或更精确的字体度量来获取
-        # 假设 item height is 24px (based on B.py logic: min(anchors_per_column * 24, ANCHOR_DROPDOWN_HEIGHT - 50))
-        item_height = 24 
+        # 减小项目高度让主播列表更紧凑
+        item_height = 20  # 从24px减小到20px，让主播之间更紧凑 
         
         layout = QHBoxLayout() # 用于放置多列QListWidget
+        layout.setSpacing(2)  # 设置列之间的紧凑间距
+        layout.setContentsMargins(8, 8, 8, 8)  # 设置更小的外边距
         
         total_anchors = len(self.found_anchors_list)
         num_columns = max(1, (total_anchors + MAX_ANCHORS_PER_COLUMN - 1) // MAX_ANCHORS_PER_COLUMN)
@@ -1467,11 +1510,34 @@ class RTMPDownloaderApp(QMainWindow):
             calculated_width = (3 + max_name_lengths[c] + 5) * 10 
             list_widget.setFixedWidth(max(calculated_width, 200))
             
-            # 修复：调整高度，使其容纳所有项目且不出现滚动条
-            # anchors_per_column * item_height 是列表项的总高度
-            # 额外加上一个小的偏移量（例如 10px）来容纳 QListWidget 内部边距
-            list_widget.setFixedHeight(anchors_per_column * item_height + 10) 
+            # 修复：调整高度和间距，使主播项目更紧凑
+            list_widget.setFixedHeight(anchors_per_column * item_height + 5)  # 减小额外高度
             list_widget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff) # 禁用滚动条
+            
+            # 设置更紧凑的样式
+            list_widget.setStyleSheet("""
+                QListWidget {
+                    border: 1px solid #dee2e6;
+                    border-radius: 4px;
+                    background-color: white;
+                    selection-background-color: #007bff;
+                    outline: none;
+                    spacing: 0px;
+                }
+                QListWidget::item {
+                    padding: 2px 8px;
+                    border: none;
+                    margin: 0px;
+                    height: 18px;
+                }
+                QListWidget::item:selected {
+                    background-color: #007bff;
+                    color: white;
+                }
+                QListWidget::item:hover {
+                    background-color: #f8f9fa;
+                }
+            """)
             
             for idx in anchor_indices[c]:
                 original_num, anchor_name = self.found_anchors_list[idx]
@@ -1521,7 +1587,7 @@ class RTMPDownloaderApp(QMainWindow):
             QMessageBox.warning(self, "错误", "主播选择失败，请重试。")
             return
         original_num, anchor_name = self.found_anchors_list[anchor_idx_in_found_list]
-        self.anchor_combo.setText(anchor_name)
+        self.anchor_combo.setText(f"👤 {anchor_name}")  # 添加图标
         self.selected_anchor_name = anchor_name
         self.selected_anchor_original_num = original_num
         self.check_download_button_state()
@@ -1532,13 +1598,13 @@ class RTMPDownloaderApp(QMainWindow):
         query = self.search_entry.text().strip().lower()
         if not query:
             self.found_anchors_list = sorted(self.anchors.items(), key=lambda item: int(item[0]))
-            self.anchor_combo.setText("请选择主播")
+            self.anchor_combo.setText("👤 请选择主播")
             self.selected_anchor_name = ""
             self.selected_anchor_original_num = ""
         else:
             found = sorted([(num, name) for num, name in self.anchors.items() if query in name.lower()], key=lambda item: int(item[0]))
             self.found_anchors_list = found
-            self.anchor_combo.setText("请选择主播") # 搜索后清空已选主播
+            self.anchor_combo.setText("👤 请选择主播") # 搜索后清空已选主播
             self.selected_anchor_name = ""
             self.selected_anchor_original_num = ""
             
@@ -1595,10 +1661,11 @@ class RTMPDownloaderApp(QMainWindow):
         
         task_info_widget = QFrame()
         task_info_widget.setObjectName("taskFrame")
-        # 修复：调整任务项的内边距和间距，使其更紧凑
+        # 修复：设置整个任务项容器的固定高度，适应更大的按钮
+        task_info_widget.setFixedHeight(40)  # 增大整个任务项的高度以适应40x30按钮
         task_hbox_layout = QHBoxLayout(task_info_widget)
-        task_hbox_layout.setContentsMargins(2, 1, 2, 1) # 更小的内边距
-        task_hbox_layout.setSpacing(4) # 更小的间距
+        task_hbox_layout.setContentsMargins(6, 5, 6, 5) # 增大内边距
+        task_hbox_layout.setSpacing(8) # 增大间距
         
         self.max_rtmp_var_display_width = max(self.max_rtmp_var_display_width, get_display_width(f"变量: {short_rtmp_var}"))
         
@@ -1620,19 +1687,21 @@ class RTMPDownloaderApp(QMainWindow):
         task_label.setObjectName("taskLabel")
         task_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         task_label.setMinimumWidth(700) 
-        # 修复：任务标签高度减小
-        task_label.setFixedHeight(22) # 设置固定高度，确保紧凑
-        task_hbox_layout.addWidget(task_label)
+        # 修复：确保文字区域有足够高度显示文字并居中对齐，适应更大的任务项框
+        task_label.setMinimumHeight(30)  # 增大最小高度以适应更大的任务项框
+        task_label.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)  # 垂直居中，水平左对齐
+        task_hbox_layout.addWidget(task_label, 1)  # 添加stretch factor使其占用剩余空间
         
         stop_button = QPushButton("") # 去除文字
         stop_button.setFont(self.default_font)
         stop_button.setObjectName("stopButton") 
-        # 修复：图标大小调小
+        # 修复：设置40x30移除按钮尺寸并确保居中对齐
         stop_button.setIcon(QIcon(os.path.join(ICON_PATH, "stop.png")))
-        stop_button.setIconSize(QSize(16, 16)) # 设置图标大小
-        stop_button.setFixedSize(26, 22) # 调整按钮大小，宽度可以更小，高度与标签一致
+        stop_button.setIconSize(QSize(16, 16)) # 调大图标大小以适应更大的按钮
+        stop_button.setMaximumSize(40, 30) # 设置40x30最大尺寸限制
+        stop_button.setFixedSize(40, 30) # 设置40x30按钮尺寸
         stop_button.clicked.connect(lambda _, tid=task_id: self.remove_from_queue(tid))
-        task_hbox_layout.addWidget(stop_button, 0, Qt.AlignVCenter) # 修复：垂直居中对齐
+        task_hbox_layout.addWidget(stop_button, 0, Qt.AlignVCenter) # 垂直居中对齐
         
         self.download_tasks[task_id] = {
             'anchor_name': anchor_name,
@@ -1652,7 +1721,7 @@ class RTMPDownloaderApp(QMainWindow):
         self.tasks_container_layout.addStretch(1) 
         self.write_to_log_ui(f"任务{task_id} 已添加到下载队列：RTMP变量='{rtmp_var}', 主播='{anchor_name}'")
         self.rtmp_entry.clear()
-        self.anchor_combo.setText("请选择主播")
+        self.anchor_combo.setText("👤 请选择主播")
         self.selected_anchor_name = ""
         self.selected_anchor_original_num = ""
         self.check_download_button_state()
@@ -1715,10 +1784,11 @@ class RTMPDownloaderApp(QMainWindow):
             
             task_info_widget = QFrame()
             task_info_widget.setObjectName("taskFrame")
-            # 修复：调整任务项的内边距和间距，使其更紧凑
+            # 修复：使立即下载的任务项与队列任务项保持一致的高度
+            task_info_widget.setFixedHeight(40)  # 与队列任务项保持一致的更大高度
             task_hbox_layout = QHBoxLayout(task_info_widget)
-            task_hbox_layout.setContentsMargins(2, 1, 2, 1) # 更小的内边距
-            task_hbox_layout.setSpacing(4) # 更小的间距
+            task_hbox_layout.setContentsMargins(6, 5, 6, 5) # 与队列任务项保持一致的内边距
+            task_hbox_layout.setSpacing(8) # 与队列任务项保持一致的间距
             
             self.max_rtmp_var_display_width = max(self.max_rtmp_var_display_width, get_display_width(f"变量: {short_rtmp_var}"))
 
@@ -1740,19 +1810,21 @@ class RTMPDownloaderApp(QMainWindow):
             task_label.setObjectName("taskLabel")
             task_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
             task_label.setMinimumWidth(700) 
-            # 修复：任务标签高度减小
-            task_label.setFixedHeight(22) # 设置固定高度，确保紧凑
-            task_hbox_layout.addWidget(task_label)
+            # 修复：与队列任务标签保持一致的设置
+            task_label.setMinimumHeight(30)  # 与队列任务标签保持一致的更大高度
+            task_label.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)  # 垂直居中，水平左对齐
+            task_hbox_layout.addWidget(task_label, 1)  # 添加stretch factor使其占用剩余空间
             
             stop_button = QPushButton("") # 去除文字
             stop_button.setFont(self.default_font)
             stop_button.setObjectName("stopButton")
-            # 修复：图标大小调小
+            # 修复：与队列移除按钮保持一致的40x30设置
             stop_button.setIcon(QIcon(os.path.join(ICON_PATH, "stop.png")))
-            stop_button.setIconSize(QSize(16, 16)) # 设置图标大小
-            stop_button.setFixedSize(26, 22) # 调整按钮大小，宽度可以更小，高度与标签一致
+            stop_button.setIconSize(QSize(16, 16)) # 调大图标大小以适应更大的按钮
+            stop_button.setMaximumSize(40, 30) # 设置40x30最大尺寸限制
+            stop_button.setFixedSize(40, 30) # 与队列移除按钮保持一致的40x30尺寸
             stop_button.clicked.connect(lambda _, tid=task_id: self.stop_download_task(tid))
-            task_hbox_layout.addWidget(stop_button, 0, Qt.AlignVCenter) # 修复：垂直居中对齐
+            task_hbox_layout.addWidget(stop_button, 0, Qt.AlignVCenter) # 垂直居中对齐
             
             self.download_tasks[task_id] = {
                 'anchor_name': anchor_name,
@@ -1778,8 +1850,8 @@ class RTMPDownloaderApp(QMainWindow):
             self.download_tasks[task_id]['status'] = '正在准备下载...'
             stop_button = self.download_tasks[task_id]['stop_button']
             stop_button.setText("") # 去除文字
-            stop_button.setFixedSize(26, 22) # 调整按钮大小
-            stop_button.setIconSize(QSize(16, 16)) # 设置图标大小
+            stop_button.setFixedSize(40, 30) # 保持与移除按钮一致的40x30大小
+            stop_button.setIconSize(QSize(16, 16)) # 保持与移除按钮一致的图标大小
 
             self.update_task_status_gui(task_id, "正在准备下载...")
 
@@ -1792,7 +1864,7 @@ class RTMPDownloaderApp(QMainWindow):
         
         if task_id not in [tid for tid, _, _ in self.download_queue]:
             self.rtmp_entry.clear()
-            self.anchor_combo.setText("请选择主播")
+            self.anchor_combo.setText("👤 请选择主播")
             self.selected_anchor_name = ""
             self.selected_anchor_original_num = ""
         self.check_download_button_state()
