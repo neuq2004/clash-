@@ -194,7 +194,7 @@ QFrame#taskFrame {
     border: 1px solid #dee2e6;
     border-radius: 4px;
     margin: 1px;
-    padding: 4px;
+    padding: 2px;
 }
 
 QFrame#taskFrame:hover {
@@ -760,10 +760,9 @@ class AnchorEditorDialog(QDialog):
         self.setModal(True)
         self.resize(700, 600)
         
-        # 居中显示
+        # 居中显示 - 修复：使用对话框实际设置的尺寸
         screen = QDesktopWidget().screenGeometry()
-        size = self.geometry()
-        self.move((screen.width() - size.width()) // 2, (screen.height() - size.height()) // 2)
+        self.move((screen.width() - 700) // 2, (screen.height() - 600) // 2)
         
         self.current_anchors = {}
         self.load_current_anchors()
@@ -978,10 +977,9 @@ class RTMPDownloaderApp(QMainWindow):
         self.setWindowTitle("RTMP 下载工具 - 美化版 (已修复功能)") 
         self.setGeometry(100, 100, 1200, 800)
         
-        # 居中显示
+        # 居中显示 - 修复：使用窗口实际设置的尺寸
         screen = QDesktopWidget().screenGeometry()
-        size = self.geometry()
-        self.move((screen.width() - size.width()) // 2, (screen.height() - size.height()) // 2)
+        self.move((screen.width() - 1200) // 2, (screen.height() - 800) // 2)
         
         # 设置应用图标
         if os.path.exists(ICON_PATH):
@@ -1175,9 +1173,9 @@ class RTMPDownloaderApp(QMainWindow):
         
         self.tasks_container = QWidget()
         self.tasks_container_layout = QVBoxLayout(self.tasks_container)
-        # 修复：调整任务项的内边距和间距，使其更紧凑
+        # 修复：进一步调整任务项的内边距和间距，使其更紧凑
         self.tasks_container_layout.setContentsMargins(0, 0, 0, 0) # 减小外边距
-        self.tasks_container_layout.setSpacing(2) # 减小任务项之间间距
+        self.tasks_container_layout.setSpacing(1) # 进一步减小任务项之间间距
         self.tasks_container_layout.setAlignment(Qt.AlignTop)
         self.tasks_container_layout.addStretch(1) 
         self.tasks_scroll.setWidget(self.tasks_container)
@@ -1595,10 +1593,10 @@ class RTMPDownloaderApp(QMainWindow):
         
         task_info_widget = QFrame()
         task_info_widget.setObjectName("taskFrame")
-        # 修复：调整任务项的内边距和间距，使其更紧凑
+        # 修复：进一步调整任务项的内边距和间距，使其更紧凑
         task_hbox_layout = QHBoxLayout(task_info_widget)
-        task_hbox_layout.setContentsMargins(2, 1, 2, 1) # 更小的内边距
-        task_hbox_layout.setSpacing(4) # 更小的间距
+        task_hbox_layout.setContentsMargins(2, 0, 2, 0) # 进一步减小内边距
+        task_hbox_layout.setSpacing(3) # 进一步减小间距
         
         self.max_rtmp_var_display_width = max(self.max_rtmp_var_display_width, get_display_width(f"变量: {short_rtmp_var}"))
         
@@ -1620,17 +1618,17 @@ class RTMPDownloaderApp(QMainWindow):
         task_label.setObjectName("taskLabel")
         task_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         task_label.setMinimumWidth(700) 
-        # 修复：任务标签高度减小
-        task_label.setFixedHeight(22) # 设置固定高度，确保紧凑
+        # 修复：进一步减小任务标签高度
+        task_label.setFixedHeight(18) # 设置更小的固定高度，使其更紧凑
         task_hbox_layout.addWidget(task_label)
         
         stop_button = QPushButton("") # 去除文字
         stop_button.setFont(self.default_font)
         stop_button.setObjectName("stopButton") 
-        # 修复：图标大小调小
+        # 修复：进一步减小图标和按钮大小
         stop_button.setIcon(QIcon(os.path.join(ICON_PATH, "stop.png")))
-        stop_button.setIconSize(QSize(16, 16)) # 设置图标大小
-        stop_button.setFixedSize(26, 22) # 调整按钮大小，宽度可以更小，高度与标签一致
+        stop_button.setIconSize(QSize(12, 12)) # 设置更小的图标大小
+        stop_button.setFixedSize(22, 18) # 调整按钮大小，与标签高度一致
         stop_button.clicked.connect(lambda _, tid=task_id: self.remove_from_queue(tid))
         task_hbox_layout.addWidget(stop_button, 0, Qt.AlignVCenter) # 修复：垂直居中对齐
         
