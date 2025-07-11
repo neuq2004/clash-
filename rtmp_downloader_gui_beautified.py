@@ -192,9 +192,9 @@ QFrame {
 QFrame#taskFrame {
     background-color: white;
     border: 1px solid #dee2e6;
-    border-radius: 6px;
-    margin: 2px;
-    padding: 6px;
+    border-radius: 4px;
+    margin: 1px;
+    padding: 4px;
 }
 
 QFrame#taskFrame:hover {
@@ -247,160 +247,7 @@ QMenu::item:selected {
 }
 """
 
-# --- 深色主题样式 ---
-DARK_THEME_STYLE = """
-QMainWindow {
-    background-color: #2b2b2b;
-    color: #ffffff;
-}
-
-QWidget {
-    background-color: #353535;
-    color: #ffffff;
-    font-family: 'Microsoft YaHei UI', sans-serif;
-}
-
-QPushButton {
-    background-color: #0d7377;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-weight: bold;
-    font-size: 11px;
-    min-width: 80px;
-    min-height: 32px;
-}
-
-QPushButton:hover {
-    background-color: #14a085;
-}
-
-QPushButton:pressed {
-    background-color: #0a5d61;
-}
-
-QPushButton:disabled {
-    background-color: #555555;
-    color: #888888;
-}
-
-QPushButton#dangerButton {
-    background-color: #dc3545;
-}
-
-QPushButton#dangerButton:hover {
-    background-color: #c82333;
-}
-
-QPushButton#successButton {
-    background-color: #28a745;
-}
-
-QPushButton#successButton:hover {
-    background-color: #218838;
-}
-
-QLineEdit {
-    border: 2px solid #555555;
-    border-radius: 6px;
-    padding: 10px 12px;
-    font-size: 11px;
-    background-color: #404040;
-    color: white;
-    selection-background-color: #0d7377;
-}
-
-QLineEdit:focus {
-    border-color: #0d7377;
-}
-
-QTextEdit {
-    border: 2px solid #555555;
-    border-radius: 6px;
-    padding: 8px;
-    font-size: 10px;
-    background-color: #404040;
-    color: white;
-    selection-background-color: #0d7377;
-}
-
-QListWidget {
-    border: 2px solid #555555;
-    border-radius: 6px;
-    background-color: #404040;
-    color: white;
-    selection-background-color: #0d7377;
-}
-
-QListWidget::item {
-    padding: 8px 12px;
-    border-bottom: 1px solid #505050;
-    border-radius: 4px;
-    margin: 2px;
-}
-
-QListWidget::item:selected {
-    background-color: #0d7377;
-    color: white;
-}
-
-QListWidget::item:hover {
-    background-color: #505050;
-}
-
-QLabel {
-    color: #ffffff;
-    font-size: 11px;
-}
-
-QLabel#titleLabel {
-    font-size: 16px;
-    font-weight: bold;
-    color: #14a085;
-    margin: 8px 0;
-}
-
-QFrame {
-    background-color: #404040;
-    border: 1px solid #555555;
-    border-radius: 8px;
-    margin: 4px;
-}
-
-QFrame#taskFrame {
-    background-color: #404040;
-    border: 1px solid #555555;
-    border-radius: 6px;
-    margin: 2px;
-    padding: 6px;
-}
-
-QFrame#taskFrame:hover {
-    border-color: #0d7377;
-}
-
-QScrollArea {
-    border: none;
-    background-color: #2b2b2b;
-}
-
-QScrollBar:vertical {
-    background: #404040;
-    width: 12px;
-    border-radius: 6px;
-}
-
-QScrollBar::handle:vertical {
-    background: #606060;
-    border-radius: 6px;
-    min-height: 20px;
-}
-
-QScrollBar::handle:vertical:hover {
-    background: #707070;
-}
-"""
+# 深色主题已移除
 
 # --- 辅助函数：计算字符串显示宽度 ---
 def get_display_width(text):
@@ -1126,7 +973,6 @@ class RTMPDownloaderApp(QMainWindow):
         self.log_lock = threading.Lock()
         self.max_anchor_name_display_width = 0
         self.max_rtmp_var_display_width = 0
-        self.is_dark_theme = False
         
         # 字体设置
         self.default_font = QFont(DEFAULT_FONT_FAMILY, DEFAULT_FONT_SIZE)
@@ -1151,15 +997,7 @@ class RTMPDownloaderApp(QMainWindow):
 
     def apply_modern_style(self):
         """应用现代化样式"""
-        if self.is_dark_theme:
-            self.setStyleSheet(DARK_THEME_STYLE)
-        else:
-            self.setStyleSheet(MODERN_STYLE)
-
-    def toggle_theme(self):
-        """切换主题"""
-        self.is_dark_theme = not self.is_dark_theme
-        self.apply_modern_style()
+        self.setStyleSheet(MODERN_STYLE)
 
     def init_ui(self):
         # 主窗口部件
@@ -1171,21 +1009,7 @@ class RTMPDownloaderApp(QMainWindow):
         main_layout.setSpacing(16)
         main_layout.setContentsMargins(16, 16, 16, 16)
         
-        # 标题区域
-        title_layout = QHBoxLayout()
-        title_label = QLabel("🎬 RTMP 流下载器")
-        title_label.setObjectName("titleLabel")
-        title_layout.addWidget(title_label)
-        
-        title_layout.addStretch()
-        
-        # 主题切换按钮
-        theme_button = QPushButton("🌙 深色主题")
-        theme_button.setObjectName("warningButton")
-        theme_button.clicked.connect(self.toggle_theme_with_text)
-        title_layout.addWidget(theme_button)
-        
-        main_layout.addLayout(title_layout)
+        # 移除标题区域
         
         # 输入区域
         input_frame = QFrame()
@@ -1307,8 +1131,8 @@ class RTMPDownloaderApp(QMainWindow):
         
         self.tasks_container = QWidget()
         self.tasks_container_layout = QVBoxLayout(self.tasks_container)
-        self.tasks_container_layout.setSpacing(4)  # 紧凑间距
-        self.tasks_container_layout.setContentsMargins(4, 4, 4, 4)  # 紧凑边距
+        self.tasks_container_layout.setSpacing(2)  # 更紧凑间距
+        self.tasks_container_layout.setContentsMargins(2, 2, 2, 2)  # 更紧凑边距
         self.tasks_container_layout.addStretch(1)
         self.tasks_scroll.setWidget(self.tasks_container)
         
@@ -1336,14 +1160,7 @@ class RTMPDownloaderApp(QMainWindow):
         # 初始状态
         self.check_download_button_state()
 
-    def toggle_theme_with_text(self):
-        """切换主题并更新按钮文本"""
-        self.toggle_theme()
-        # 更新按钮文本
-        for button in self.findChildren(QPushButton):
-            if "深色主题" in button.text():
-                button.setText("☀️ 浅色主题" if self.is_dark_theme else "🌙 深色主题")
-                break
+# 主题切换功能已移除
 
     def closeEvent(self, event):
         """关闭应用时的清理工作"""
@@ -1703,8 +1520,8 @@ class RTMPDownloaderApp(QMainWindow):
         task_info_widget = QFrame()
         task_info_widget.setObjectName("taskFrame")
         task_hbox_layout = QHBoxLayout(task_info_widget)
-        task_hbox_layout.setContentsMargins(6, 4, 6, 4)
-        task_hbox_layout.setSpacing(8)
+        task_hbox_layout.setContentsMargins(4, 2, 4, 2)
+        task_hbox_layout.setSpacing(6)
         
         task_label = QLabel(f"[任务{task_id}] 主播: {anchor_name}, 变量: {short_rtmp_var}, 状态: 等待下载...")
         task_label.setFont(self.tasks_font)
@@ -1716,7 +1533,7 @@ class RTMPDownloaderApp(QMainWindow):
         stop_button = QPushButton("🗑️ 移除")
         stop_button.setObjectName("dangerButton")
         stop_button.setFont(self.default_font)
-        stop_button.setFixedSize(70, 26)
+        stop_button.setFixedSize(60, 22)
         stop_button.clicked.connect(lambda _, tid=task_id: self.remove_from_queue(tid))
         task_hbox_layout.addWidget(stop_button, 0, Qt.AlignCenter)
         
@@ -1815,8 +1632,8 @@ class RTMPDownloaderApp(QMainWindow):
             task_info_widget = QFrame()
             task_info_widget.setObjectName("taskFrame")
             task_hbox_layout = QHBoxLayout(task_info_widget)
-            task_hbox_layout.setContentsMargins(6, 4, 6, 4)
-            task_hbox_layout.setSpacing(8)
+            task_hbox_layout.setContentsMargins(4, 2, 4, 2)
+            task_hbox_layout.setSpacing(6)
             
             task_label = QLabel(f"[任务{task_id}] 主播: {anchor_name}, 变量: {short_rtmp_var}, 状态: 正在准备下载...")
             task_label.setFont(self.tasks_font)
@@ -1828,7 +1645,7 @@ class RTMPDownloaderApp(QMainWindow):
             stop_button = QPushButton("⏹️ 终止")
             stop_button.setObjectName("dangerButton")
             stop_button.setFont(self.default_font)
-            stop_button.setFixedSize(70, 26)
+            stop_button.setFixedSize(60, 22)
             stop_button.clicked.connect(lambda _, tid=task_id: self.stop_download_task(tid))
             task_hbox_layout.addWidget(stop_button, 0, Qt.AlignCenter)
             
@@ -1860,7 +1677,7 @@ class RTMPDownloaderApp(QMainWindow):
             
             self.download_tasks[task_id]['status'] = '正在准备下载...'
             self.download_tasks[task_id]['stop_button'].setText("⏹️ 终止")
-            self.download_tasks[task_id]['stop_button'].setFixedSize(70, 26)
+            self.download_tasks[task_id]['stop_button'].setFixedSize(60, 22)
             self.update_task_status_gui(task_id, "正在准备下载...")
 
         # 创建并启动下载线程
@@ -1873,8 +1690,8 @@ class RTMPDownloaderApp(QMainWindow):
         
         thread.start()
         
-        # 清空输入字段 - 直接下载时总是清空，队列下载时不清空
-        if rtmp_var == self.rtmp_entry.text().strip():  # 直接下载
+        # 清空输入字段 - 只有直接下载时才清空
+        if task_id is None or rtmp_var == self.rtmp_entry.text().strip():  # 直接下载
             self.rtmp_entry.clear()
             self.anchor_combo.setText("请选择主播")
             self.selected_anchor_name = ""
