@@ -1619,21 +1619,21 @@ class RTMPDownloaderApp(QMainWindow):
         task_label.setObjectName("taskLabel")
         task_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         task_label.setMinimumWidth(700) 
-        # 修复：确保文字区域有足够高度显示文字
+        # 修复：确保文字区域有足够高度显示文字并居中对齐
         task_label.setMinimumHeight(22)  # 设置最小高度确保文字可见
-        task_label.setAlignment(Qt.AlignVCenter)  # 垂直居中对齐
-        task_hbox_layout.addWidget(task_label)
+        task_label.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)  # 垂直居中，水平左对齐
+        task_hbox_layout.addWidget(task_label, 1)  # 添加stretch factor使其占用剩余空间
         
         stop_button = QPushButton("") # 去除文字
         stop_button.setFont(self.default_font)
         stop_button.setObjectName("stopButton") 
-        # 修复：真正缩小终止按钮尺寸并居中对齐
+        # 修复：设置更小的移除按钮尺寸并确保居中对齐
         stop_button.setIcon(QIcon(os.path.join(ICON_PATH, "stop.png")))
         stop_button.setIconSize(QSize(10, 10)) # 保持图标大小不变
-        stop_button.setMaximumSize(18, 18) # 设置最大尺寸限制
-        stop_button.setFixedSize(18, 18) # 设置明显更小的按钮尺寸
+        stop_button.setMaximumSize(16, 16) # 设置更小的最大尺寸限制
+        stop_button.setFixedSize(16, 16) # 设置更小的按钮尺寸
         stop_button.clicked.connect(lambda _, tid=task_id: self.remove_from_queue(tid))
-        task_hbox_layout.addWidget(stop_button, 0, Qt.AlignCenter) # 完全居中对齐
+        task_hbox_layout.addWidget(stop_button, 0, Qt.AlignVCenter) # 垂直居中对齐
         
         self.download_tasks[task_id] = {
             'anchor_name': anchor_name,
