@@ -36,7 +36,7 @@ DEFAULT_FONT_FAMILY = "Microsoft YaHei UI"  # 默认字体家族
 DEFAULT_FONT_SIZE = 10  # 默认字体大小
 LOG_FONT_SIZE = 9  # 日志字体大小
 ANCHOR_LIST_FONT_FAMILY = "Microsoft YaHei UI"  # 主播列表字体
-ANCHOR_LIST_FONT_SIZE = 12  # 主播列表字体大小
+ANCHOR_LIST_FONT_SIZE = 10  # 主播列表字体大小（减小）
 MAX_ANCHORS_PER_COLUMN = 52  # 每列最大主播数
 ANCHOR_DROPDOWN_WIDTH = 1200 # 主播下拉菜单宽度
 ANCHOR_DROPDOWN_HEIGHT = 1100 # 主播下拉菜单高度
@@ -129,6 +129,29 @@ QPushButton#stopButton:hover {
 
 QPushButton#stopButton:pressed {
     background-color: #bd2130;
+}
+
+QLineEdit#anchorCombo {
+    background-color: #f8f9fa;
+    border: 2px solid #007bff;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 11px;
+    color: #495057;
+    font-weight: bold;
+    text-align: center;
+}
+
+QLineEdit#anchorCombo:hover {
+    background-color: #e3f2fd;
+    border-color: #0056b3;
+    cursor: pointer;
+}
+
+QLineEdit#anchorCombo:focus {
+    background-color: #ffffff;
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
 QLineEdit {
@@ -1126,8 +1149,10 @@ class RTMPDownloaderApp(QMainWindow):
         select_layout.addWidget(select_label)
         
         self.anchor_combo = QLineEdit() 
-        self.anchor_combo.setPlaceholderText("请选择主播")
+        self.anchor_combo.setObjectName("anchorCombo")  # 设置样式ID
+        self.anchor_combo.setPlaceholderText("👤 请选择主播")  # 添加图标
         self.anchor_combo.setReadOnly(True)
+        self.anchor_combo.setAlignment(Qt.AlignCenter)  # 文字居中
         self.anchor_combo.textChanged.connect(self.check_download_button_state)
         # 修复：直接连接 mousePressEvent 到 show_anchor_dropdown
         self.anchor_combo.mousePressEvent = lambda event: self.show_anchor_dropdown()
@@ -1370,8 +1395,8 @@ class RTMPDownloaderApp(QMainWindow):
         # 只有填好变量 AND 选择好主播，按钮才启用
         enable = bool(self.rtmp_entry.text().strip() and \
                       self.selected_anchor_name and \
-                      self.anchor_combo.text() != "请选择主播" and \
-                      self.anchor_combo.text() != "无主播")
+                      self.anchor_combo.text() != "👤 请选择主播" and \
+                      self.anchor_combo.text() != "❌ 无主播")
         
         self.add_to_queue_button.setEnabled(enable)
         self.download_button.setEnabled(enable)
@@ -1395,14 +1420,14 @@ class RTMPDownloaderApp(QMainWindow):
         if not self.anchors and not os.path.exists(ANCHORS_FILE):
             QMessageBox.warning(self, "警告", f"未找到主播配置文件 '{ANCHORS_FILE}'。\n请确保该文件存在且每行输入一个主播名称。")
             self.disable_operational_controls() 
-            self.anchor_combo.setText("无主播")
+            self.anchor_combo.setText("❌ 无主播")
             self.anchor_combo.setEnabled(False) 
             self.refresh_anchors_button.setEnabled(True)
             self.edit_anchors_button.setEnabled(True)
         elif not self.anchors:
             QMessageBox.warning(self, "警告", f"主播配置文件 '{ANCHORS_FILE}' 为空。\n请在文件中添加主播名称。")
             self.disable_operational_controls() 
-            self.anchor_combo.setText("无主播")
+            self.anchor_combo.setText("❌ 无主播")
             self.anchor_combo.setEnabled(False) 
             self.refresh_anchors_button.setEnabled(True)
             self.edit_anchors_button.setEnabled(True)
@@ -1420,7 +1445,7 @@ class RTMPDownloaderApp(QMainWindow):
             self.refresh_anchors_button.setEnabled(True)
             self.edit_anchors_button.setEnabled(True)
             self.check_download_button_state()
-            self.anchor_combo.setText("请选择主播")
+            self.anchor_combo.setText("👤 请选择主播")
             self.selected_anchor_name = ""
             self.selected_anchor_original_num = ""
             self.search_entry.clear()
@@ -1455,11 +1480,12 @@ class RTMPDownloaderApp(QMainWindow):
         dropdown.setWindowTitle("选择主播")
         
         # 计算列表项的单行高度
-        # 这里使用一个近似值，可以通过实际测量或更精确的字体度量来获取
-        # 假设 item height is 24px (based on B.py logic: min(anchors_per_column * 24, ANCHOR_DROPDOWN_HEIGHT - 50))
-        item_height = 24 
+        # 减小项目高度让主播列表更紧凑
+        item_height = 20  # 从24px减小到20px，让主播之间更紧凑 
         
         layout = QHBoxLayout() # 用于放置多列QListWidget
+        layout.setSpacing(2)  # 设置列之间的紧凑间距
+        layout.setContentsMargins(8, 8, 8, 8)  # 设置更小的外边距
         
         total_anchors = len(self.found_anchors_list)
         num_columns = max(1, (total_anchors + MAX_ANCHORS_PER_COLUMN - 1) // MAX_ANCHORS_PER_COLUMN)
@@ -1484,11 +1510,34 @@ class RTMPDownloaderApp(QMainWindow):
             calculated_width = (3 + max_name_lengths[c] + 5) * 10 
             list_widget.setFixedWidth(max(calculated_width, 200))
             
-            # 修复：调整高度，使其容纳所有项目且不出现滚动条
-            # anchors_per_column * item_height 是列表项的总高度
-            # 额外加上一个小的偏移量（例如 10px）来容纳 QListWidget 内部边距
-            list_widget.setFixedHeight(anchors_per_column * item_height + 10) 
+            # 修复：调整高度和间距，使主播项目更紧凑
+            list_widget.setFixedHeight(anchors_per_column * item_height + 5)  # 减小额外高度
             list_widget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff) # 禁用滚动条
+            
+            # 设置更紧凑的样式
+            list_widget.setStyleSheet("""
+                QListWidget {
+                    border: 1px solid #dee2e6;
+                    border-radius: 4px;
+                    background-color: white;
+                    selection-background-color: #007bff;
+                    outline: none;
+                    spacing: 0px;
+                }
+                QListWidget::item {
+                    padding: 2px 8px;
+                    border: none;
+                    margin: 0px;
+                    height: 18px;
+                }
+                QListWidget::item:selected {
+                    background-color: #007bff;
+                    color: white;
+                }
+                QListWidget::item:hover {
+                    background-color: #f8f9fa;
+                }
+            """)
             
             for idx in anchor_indices[c]:
                 original_num, anchor_name = self.found_anchors_list[idx]
@@ -1538,7 +1587,7 @@ class RTMPDownloaderApp(QMainWindow):
             QMessageBox.warning(self, "错误", "主播选择失败，请重试。")
             return
         original_num, anchor_name = self.found_anchors_list[anchor_idx_in_found_list]
-        self.anchor_combo.setText(anchor_name)
+        self.anchor_combo.setText(f"👤 {anchor_name}")  # 添加图标
         self.selected_anchor_name = anchor_name
         self.selected_anchor_original_num = original_num
         self.check_download_button_state()
@@ -1549,13 +1598,13 @@ class RTMPDownloaderApp(QMainWindow):
         query = self.search_entry.text().strip().lower()
         if not query:
             self.found_anchors_list = sorted(self.anchors.items(), key=lambda item: int(item[0]))
-            self.anchor_combo.setText("请选择主播")
+            self.anchor_combo.setText("👤 请选择主播")
             self.selected_anchor_name = ""
             self.selected_anchor_original_num = ""
         else:
             found = sorted([(num, name) for num, name in self.anchors.items() if query in name.lower()], key=lambda item: int(item[0]))
             self.found_anchors_list = found
-            self.anchor_combo.setText("请选择主播") # 搜索后清空已选主播
+            self.anchor_combo.setText("👤 请选择主播") # 搜索后清空已选主播
             self.selected_anchor_name = ""
             self.selected_anchor_original_num = ""
             
@@ -1672,7 +1721,7 @@ class RTMPDownloaderApp(QMainWindow):
         self.tasks_container_layout.addStretch(1) 
         self.write_to_log_ui(f"任务{task_id} 已添加到下载队列：RTMP变量='{rtmp_var}', 主播='{anchor_name}'")
         self.rtmp_entry.clear()
-        self.anchor_combo.setText("请选择主播")
+        self.anchor_combo.setText("👤 请选择主播")
         self.selected_anchor_name = ""
         self.selected_anchor_original_num = ""
         self.check_download_button_state()
@@ -1815,7 +1864,7 @@ class RTMPDownloaderApp(QMainWindow):
         
         if task_id not in [tid for tid, _, _ in self.download_queue]:
             self.rtmp_entry.clear()
-            self.anchor_combo.setText("请选择主播")
+            self.anchor_combo.setText("👤 请选择主播")
             self.selected_anchor_name = ""
             self.selected_anchor_original_num = ""
         self.check_download_button_state()
